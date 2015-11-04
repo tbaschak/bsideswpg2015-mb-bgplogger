@@ -16,7 +16,7 @@ all: clean slides $(PDFOBJS)
 pdf: cleanpdf $(PDFOBJS)
 
 %.html: %.md
-	pandoc -V theme=default -s -S -t revealjs --mathjax -V revealjs-url:https://ciscodude.net/vendor/reveal.js $< -o $@
+	pandoc -V theme=night -s -S -t revealjs --mathjax -V revealjs-url:https://ciscodude.net/vendor/reveal.js $< -o $@
 
 slides: $(SLIDEOBJS)
 
