@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Theo Baschak" />
+  <title>BGP, some Python, and a DB</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://ciscodude.net/vendor/reveal.js/css/reveal.min.css"/>
+    <style type="text/css">code{white-space: pre;}</style>
+    <link rel="stylesheet" href="https://ciscodude.net/vendor/reveal.js/css/theme/simple.css" id="theme">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://ciscodude.net/vendor/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="https://ciscodude.net/vendor/reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">BGP, some Python, and a DB</h1>
+    <h2 class="author">Theo Baschak</h2>
+    <h3 class="date">BSides Winnipeg 2015-11-15</h3>
+</section>
+
+<section id="slides" class="slide level1">
+<h1>Slides</h1>
+<blockquote>
+<p>Reveal.js slides <a href="https://ciscodude.net/presentations/bbsideswpg2015-mb-bgplogger">ciscodude.net/presentations/bsideswpg2015-mb-bgplogger</a></p>
+<p>Beamer PDF slides <a href="https://ciscodude.net/presentations/bbsideswpg2015-mb-bgplogger.pdf">ciscodude.net/presentations/bsideswpg2015-mb-bgplogger.pdf</a></p>
+</blockquote>
+<blockquote>
+<p>exabgp-logger daemon project at <a href="https://github.com/tbaschak/exabgp-logger">github.com/tbaschak/exabgp-logger</a></p>
+</blockquote>
+</section>
+<section id="who-i-am" class="slide level1">
+<h1>Who I Am</h1>
+<ul>
+<li>Network Architect @ Daemon Defense Systems.</li>
+<li>Avid Open Source Software user/fanatic, and contributor.</li>
+<li>Obsessed with network monitoring and routing.</li>
+<li>Involved with several nonprofits in Winnipeg.
+<ol type="1">
+<li>Board of the Manitoba Internet Exchange (MBIX).</li>
+<li>Board of <a href="https://coldhak.ca">Coldhak</a>
+<ul>
+<li>Coldhak is a nonprofit dedicated to furthering privacy, security and freedom of speech.</li>
+</ul></li>
+</ol></li>
+</ul>
+</section>
+<section id="overview" class="slide level1">
+<h1>Overview</h1>
+<ul>
+<li>Inspiration</li>
+<li>The idea</li>
+<li>Design</li>
+<li>Building the logger</li>
+<li>Running it</li>
+<li>Peering</li>
+<li>Scaling it up</li>
+<li>Scaling it futher</li>
+<li>Finding things</li>
+<li>Automating</li>
+</ul>
+</section>
+<section id="inspiration" class="slide level1">
+<h1>Inspiration</h1>
+<ul>
+<li>Talked about BGP hijacking in my BSidesWpg 2013 talk.</li>
+<li>Dyn Research blogs (formerly Renesys Corporation):
+<ul>
+<li>2 days after BSidesWpg 2013, November 19 2013, <a href="http://research.dyn.com/2013/11/mitm-internet-hijacking/">Targeted Internet Traffic Misdirection</a></li>
+<li>March 2015, <a href="http://research.dyn.com/2015/03/uk-traffic-diverted-ukraine/">UK traffic diverted through Ukraine</a></li>
+</ul></li>
+<li>BGPmon &amp; BGP Stream</li>
+</ul>
+</section>
+<section id="the-idea" class="slide level1">
+<h1>The idea</h1>
+<blockquote>
+<figure>
+<img src="http://scienceblogs.com/retrospectacle/wp-content/blogs.dir/463/files/2012/04/i-3530f86be619cdc7d42c13cdca188088-edison.bmp" alt="Edison electric light" /><figcaption>Edison electric light</figcaption>
+</figure>
+</blockquote>
+</section>
+<section id="design" class="slide level1">
+<h1>Design</h1>
+<ul>
+<li>Exabgp (the BGP, and the Python)
+<ul>
+<li>one process, per AF, per peer (v4 and v6 separate)</li>
+<li>outputs BGP updates as JSON</li>
+</ul></li>
+<li>Couchdb (the DB)
+<ul>
+<li>stores JSON objects</li>
+<li>one database per peer (v4 and v6 combined)</li>
+<li>replicate each peer into common DB</li>
+</ul></li>
+</ul>
+</section>
+<section id="building" class="slide level1">
+<h1>Building</h1>
+<ul>
+<li>Uses <a href="https://github.com/Exa-Networks/exabgp">exabgp</a>
+<ul>
+<li>Exabgp config defines actions for route input and output</li>
+<li>Just input in this case, not advertising</li>
+<li>Bash while loop to read line by line and POST to couchdb</li>
+</ul></li>
+</ul>
+</section>
+<section id="running" class="slide level1">
+<h1>Running</h1>
+<ul>
+<li>Able to run without a peer for basic config checks</li>
+<li>Need a live BGP peer to start viewing BGP update record format</li>
+<li>First tests
+<ul>
+<li>First version just cat appended the JSON to a file so I could look at the records</li>
+</ul></li>
+<li>Growing Pains</li>
+</ul>
+</section>
+<section id="peering" class="slide level1">
+<h1>Peering</h1>
+<ol start="0" type="1">
+<li>MFNERC</li>
+<li>MERLIN. Gracious statement of support on MBIX-Tech list as well.</li>
+<li>3T Systems</li>
+<li>Les.net</li>
+</ol>
+</section>
+<section id="scaling-up" class="slide level1">
+<h1>Scaling Up</h1>
+<ul>
+<li>Moved VM</li>
+<li>Offsite replication</li>
+<li>Increased size of VM and went 64bit</li>
+</ul>
+</section>
+<section id="finding-things" class="slide level1">
+<h1>Finding things</h1>
+<ul>
+<li></li>
+</ul>
+</section>
+<section id="automating" class="slide level1">
+<h1>Automating</h1>
+<ul>
+<li></li>
+</ul>
+</section>
+<section id="the-end" class="slide level1">
+<h1>The End</h1>
+<blockquote>
+<p>Reveal.js slides <a href="https://ciscodude.net/presentations/bbsideswpg2015-mb-bgplogger">ciscodude.net/presentations/bsideswpg2015-mb-bgplogger</a></p>
+<p>Beamer PDF slides <a href="https://ciscodude.net/presentations/bbsideswpg2015-mb-bgplogger.pdf">ciscodude.net/presentations/bsideswpg2015-mb-bgplogger.pdf</a></p>
+</blockquote>
+<blockquote>
+<p>exabgp-logger daemon project at <a href="https://github.com/tbaschak/exabgp-logger">github.com/tbaschak/exabgp-logger</a></p>
+</blockquote>
+</section>
+    </div>
+  </div>
+
+
+  <script src="https://ciscodude.net/vendor/reveal.js/lib/js/head.min.js"></script>
+  <script src="https://ciscodude.net/vendor/reveal.js/js/reveal.min.js"></script>
+
+  <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        theme: 'default', // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'https://ciscodude.net/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://ciscodude.net/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'https://ciscodude.net/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'https://ciscodude.net/vendor/reveal.js/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'https://ciscodude.net/vendor/reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>
