@@ -1,5 +1,5 @@
 % BGP, some Python, and a DB
-% Theo Baschak
+% Theodore Baschak
 % BSides Winnipeg 2015-11-15
 
 # Slides
@@ -10,15 +10,15 @@
 
 > exabgp-logger daemon project at [github.com/tbaschak/exabgp-logger](https://github.com/tbaschak/exabgp-logger)
 
-# Who I Am
+# Who Is Theo?
 
-* Network Architect @ Daemon Defense Systems.
-* Avid Open Source Software user/fanatic, and contributor.
-* Obsessed with network monitoring and routing.
-* Involved with several nonprofits in Winnipeg.
-	1. Board of the Manitoba Internet Exchange (MBIX).
+* Network Architect @ Daemon Defense Systems
+* Avid Open Source Software user/fanatic, and contributor
+* Obsessed with network monitoring and routing
+* Involved with several nonprofits in Winnipeg
+	1. Board of the Manitoba Internet Exchange (MBIX)
 	2. Board of [Coldhak](https://coldhak.ca)
-		*	Coldhak is a nonprofit dedicated to furthering privacy, security and freedom of speech.
+		*	Coldhak is a nonprofit dedicated to furthering privacy, security and freedom of speech
 
 # Overview
 
@@ -67,13 +67,13 @@
 * Able to run without a peer for basic config checks
 * Need a live BGP peer to start viewing BGP update record format
 * First tests
+	* MFNERC, alpha testing only -- 1 million records
 	* First version just cat appended the JSON to a file so I could look at the records
 * Growing Pains
 
 # Peering
 
-0. MFNERC
-1. MERLIN. Gracious statement of support on MBIX-Tech list as well.
+1. MERLIN -- Gracious statement of support on MBIX-Tech list as well
 2. 3T Systems
 3. Les.net
 
