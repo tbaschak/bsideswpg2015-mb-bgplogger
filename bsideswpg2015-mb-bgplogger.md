@@ -28,6 +28,7 @@
 * Building the logger
 * Running it
 * Peering
+* Manitoban Routing
 * Scaling it up
 * Scaling it futher
 * Finding things
@@ -35,15 +36,23 @@
 
 # Inspiration
 
-* Talked about BGP hijacking in my BSidesWpg 2013 talk.
-* Dyn Research blogs (formerly Renesys Corporation):
+* Talked about BGP hijacking in my BSidesWpg 2013 talk
+* Dyn Research blogs, formerly Renesys Corporation:
 	* 2 days after BSidesWpg 2013, November 19 2013, [Targeted Internet Traffic Misdirection](http://research.dyn.com/2013/11/mitm-internet-hijacking/)
 	* March 2015, [UK traffic diverted through Ukraine](http://research.dyn.com/2015/03/uk-traffic-diverted-ukraine/)
-* BGPmon & BGP Stream
+* [BGPmon](http://www.bgpmon.net/) & [BGP Stream](https://bgpstream.com/)
 
-# The idea
+# Lightbulb
 
-> ![Edison electric light](http://scienceblogs.com/retrospectacle/wp-content/blogs.dir/463/files/2012/04/i-3530f86be619cdc7d42c13cdca188088-edison.bmp)
+> ![Edison electric light](https://ciscodude.net/images/2015-11-15-edison.jpg)
+
+# The Idea
+
+* To log BGP updates from various Manitoban sources
+	* exabgp seemed like a good starting place
+	* a [mailing list post](https://groups.google.com/forum/#!searchin/exabgp-users/route$20collector/exabgp-users/MQDuRNrSCiE/a-jENESfEiwJ) w/ a simple shell collector script
+* To examine routes for peering relationships between Manitoban ASNs
+* To look at the effects of BGP leaks on Manitoban routing
 
 # Design
 
@@ -74,8 +83,14 @@
 # Peering
 
 1. MERLIN -- Gracious statement of support on MBIX-Tech list as well
-2. 3T Systems
+2. 3T Systems 
 3. Les.net
+4. Swift High Speed Internet
+
+# MB Routing
+
+* Many common carriers
+* Some less common picked up in Toronto, Alberta and Chicago
 
 # Scaling Up
 
@@ -89,7 +104,12 @@
 
 # Automating
 
-* 
+* Create a RIB for each peer & AF
+* Need to compare updates with RIB
+	* Prefix length
+	* AS-PATH
+* Ability to replay BGP updates from couchdb 
+
 
 # The End
 

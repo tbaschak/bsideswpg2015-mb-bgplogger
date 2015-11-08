@@ -3,7 +3,7 @@ PDFOBJS		= $(SRCS:.md=.pdf)
 SLIDEOBJS	= $(SRCS:.md=.html)
 PANDOC		= pandoc
 PFLAGS		= -t beamer
-ORIGIN		= github
+HTMLFLAGS   = -V theme=night -V transition="fade" --section-divs -s -S -t revealjs --mathjax -V revealjs-url:https://ciscodude.net/vendor/reveal.js
 
 .PHONY: all clean slides pdf 
 
@@ -16,7 +16,7 @@ all: clean slides $(PDFOBJS)
 pdf: cleanpdf $(PDFOBJS)
 
 %.html: %.md
-	pandoc -V theme=night -s -S -t revealjs --mathjax -V revealjs-url:https://ciscodude.net/vendor/reveal.js $< -o $@
+	pandoc $(HTMLFLAGS) $< -o $@
 
 slides: $(SLIDEOBJS)
 
@@ -27,16 +27,3 @@ cleanpdf:
 
 cleanslides:
 	@rm -f $(SLIDEOBJS) 
-
-gh-pages: slides pdf
-	@git add $(PDFOBJS) $(SLIDEOBJS)
-	@git commit -m 'generate latest slides via Makefile'
-	@git push -u $(ORIGIN) master
-	@git checkout gh-pages
-	@git checkout master -- $(SLIDEOBJS)
-	@git checkout master -- $(PDFOBJS)
-	@git add $(PDFOBJS) $(SLIDEOBJS)
-	@git commit -m 'pull in latest generated slides from master branch'
-	@git push -u $(ORIGIN) gh-pages
-	@git checkout master
-	@echo Slides generated and pushed to gh-pages branch
